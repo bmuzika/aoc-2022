@@ -1,0 +1,6 @@
+input*
+.DS_Store
+*.sw[a-z]
+.idea
+target
+
