@@ -23,9 +23,9 @@ fn do_day4a(elf_pairs: &[String]) -> u64 {
             let elf1 = elf_pair[0];
             let elf2 = elf_pair[1];
 
-            if elf1.0 <= elf2.0 && elf1.1 >= elf2.1 { 1 + acc }
-            else if elf2.0 <= elf1.0 && elf2.1 >= elf1.1 { 1 + acc }
-            else {0 + acc}
+            if (elf1.0 <= elf2.0 && elf1.1 >= elf2.1)
+            || (elf2.0 <= elf1.0 && elf2.1 >= elf1.1) { 1 + acc }
+            else {acc}
         })
 }
 
@@ -39,9 +39,9 @@ fn do_day4b(elf_pairs: &[String]) -> u64 {
                  let elf1 = elf_pair[0];
                  let elf2 = elf_pair[1];
 
-                 if elf1.0 <= elf2.0 && elf1.1 >= elf2.0 { 1 + acc }
-                 else if elf2.0 <= elf1.0 && elf2.1 >= elf1.0 { 1 + acc }
-                 else {0 + acc}
+                 if (elf1.0 <= elf2.0 && elf1.1 >= elf2.0)
+                 || (elf2.0 <= elf1.0 && elf2.1 >= elf1.0) { 1 + acc }
+                 else {acc}
              })
 }
 
