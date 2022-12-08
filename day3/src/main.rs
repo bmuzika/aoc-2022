@@ -10,18 +10,27 @@ fn main() {
 
 fn char_to_priority(c: &char) -> u64 {
     match c {
-        'a'..='z' => {1 + *c as u64 - b'a' as u64},
-        'A'..='Z' => {27 + *c as u64 - b'A' as u64},
-        _ => 0
+        'a'..='z' => 1 + *c as u64 - b'a' as u64,
+        'A'..='Z' => 27 + *c as u64 - b'A' as u64,
+        _ => 0,
     }
 }
 
 fn do_day3a(packs: &[String]) -> u64 {
     packs.iter().fold(0, |acc, pack| {
-        let (first, last) = pack.split_at(pack.len()/2);
-        acc + first.chars().find_map(|c| {
-            last.chars().find_map(|m| if m == c {Some(char_to_priority(&c))} else {None})
-        }).expect("No match found")
+        let (first, last) = pack.split_at(pack.len() / 2);
+        acc + first
+            .chars()
+            .find_map(|c| {
+                last.chars().find_map(|m| {
+                    if m == c {
+                        Some(char_to_priority(&c))
+                    } else {
+                        None
+                    }
+                })
+            })
+            .expect("No match found")
     })
 }
 
@@ -60,13 +69,16 @@ fn find_triple_match(a: &[char], b: &[char], c: &[char]) -> char {
 #[test]
 fn test3_a() {
     let input: Vec<String> = vec![
-    "vJrwpWtwJgWrhcsFMMfFFhFp",
-    "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-    "PmmdzqPrVvPwwTWBwg",
-    "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-    "ttgJtRGJQctTZtZT",
-    "CrZsJsPPZsGzwwsLwLmpwMDw",
-    ].iter().map(|s| s.to_string()).collect();
+        "vJrwpWtwJgWrhcsFMMfFFhFp",
+        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+        "PmmdzqPrVvPwwTWBwg",
+        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+        "ttgJtRGJQctTZtZT",
+        "CrZsJsPPZsGzwwsLwLmpwMDw",
+    ]
+    .iter()
+    .map(|s| s.to_string())
+    .collect();
 
     assert_eq!(do_day3a(&input), 157);
 }
@@ -80,7 +92,10 @@ fn test3_b() {
         "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
         "ttgJtRGJQctTZtZT",
         "CrZsJsPPZsGzwwsLwLmpwMDw",
-    ].iter().map(|s| s.to_string()).collect();
+    ]
+    .iter()
+    .map(|s| s.to_string())
+    .collect();
 
     assert_eq!(do_day3b(&input), 70);
 }

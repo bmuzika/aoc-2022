@@ -1,4 +1,4 @@
-use aoc_helpers::{open_file_into_string};
+use aoc_helpers::open_file_into_string;
 
 fn main() {
     let file = open_file_into_string("input");
@@ -6,7 +6,6 @@ fn main() {
     println!("Part A: {}", do_day6a(&file));
     println!("Part B: {}", do_day6b(&file));
 }
-
 
 fn do_day6a(input: &str) -> usize {
     let mut idx = 4;

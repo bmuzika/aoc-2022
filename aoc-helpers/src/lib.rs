@@ -15,18 +15,20 @@ pub fn open_file_into_string(path: &str) -> String {
 }
 
 pub fn split_by_newline(input: &str) -> Vec<String> {
-    input.split('\n')
+    input
+        .split('\n')
         .map(|s| s.to_string())
         .filter(|s| !s.is_empty())
         .collect::<Vec<String>>()
 }
 
 pub fn string_into_vec_of_uint_radix(input: String, radix: u32) -> Vec<u64> {
-    input.split('\n')
-                      .map(|s| s.to_string())
-                      .filter(|s| !s.is_empty())
-                      .map(|s| u64::from_str_radix(&s, radix).unwrap())
-                      .collect::<Vec<u64>>()
+    input
+        .split('\n')
+        .map(|s| s.to_string())
+        .filter(|s| !s.is_empty())
+        .map(|s| u64::from_str_radix(&s, radix).unwrap())
+        .collect::<Vec<u64>>()
 }
 
 pub fn string_into_vec_of_uint(input: String) -> Vec<u64> {

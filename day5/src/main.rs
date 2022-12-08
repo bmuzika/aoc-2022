@@ -1,4 +1,4 @@
-use aoc_helpers::{open_file_into_string};
+use aoc_helpers::open_file_into_string;
 
 fn main() {
     let file = open_file_into_string("input");
@@ -16,18 +16,25 @@ struct Instruction {
 
 fn prepare_stacks_and_instructions(input: &str) -> (Vec<Vec<char>>, Vec<Instruction>) {
     let input = input.split("\n\n").collect::<Vec<&str>>();
-    let num_stacks: u64 = input[0].split('\n').rev().take(1).last().unwrap().split(' ').last().unwrap().trim().parse().unwrap();
+    let num_stacks: u64 = input[0]
+        .split('\n')
+        .rev()
+        .take(1)
+        .last()
+        .unwrap()
+        .split(' ')
+        .last()
+        .unwrap()
+        .trim()
+        .parse()
+        .unwrap();
     let mut stacks: Vec<Vec<char>> = vec![];
     for _ in 0..num_stacks {
         stacks.push(vec![]);
     }
 
-    input[0]
-        .split('\n')
-        .rev()
-        .skip(1)
-        .for_each(|row| row
-            .chars()
+    input[0].split('\n').rev().skip(1).for_each(|row| {
+        row.chars()
             .collect::<Vec<char>>()
             .chunks(4)
             .map(|c| c.iter().collect::<String>())
@@ -42,23 +49,22 @@ fn prepare_stacks_and_instructions(input: &str) -> (Vec<Vec<char>>, Vec<Instruct
                     stacks[idx].push(c.chars().take(1).next().unwrap());
                 }
             })
-        );
+    });
 
     let instuctions: Vec<Instruction> = input[1]
         .split('\n')
-        .map(|s| s
-            .split(' ')
-            .skip(1)
-            .step_by(2)
-            .map(|p| p
-                .parse()
-                .unwrap())
-            .collect::<Vec<usize>>())
+        .map(|s| {
+            s.split(' ')
+                .skip(1)
+                .step_by(2)
+                .map(|p| p.parse().unwrap())
+                .collect::<Vec<usize>>()
+        })
         .filter(|v| !v.is_empty())
-        .map(|v| Instruction{
+        .map(|v| Instruction {
             quantity: v[0],
             src: v[1],
-            dst: v[2]
+            dst: v[2],
         })
         .collect();
 

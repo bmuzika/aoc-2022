@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use aoc_helpers::{open_file_into_string};
 use crate::Command::ChangeDirectory;
 use crate::FsItem::{Directory, File};
+use aoc_helpers::open_file_into_string;
+use std::collections::HashMap;
 
 fn main() {
     let file = open_file_into_string("input");
@@ -19,7 +19,7 @@ enum FsItem {
 #[derive(Debug)]
 enum Command {
     ChangeDirectory(String),
-    List
+    List,
 }
 
 fn string_to_command(input: &str) -> Command {
@@ -41,14 +41,26 @@ fn string_to_item(input: &str) -> (String, FsItem) {
 }
 
 fn prepare_filesystem(input: &str) -> HashMap<String, FsItem> {
-    let io: Vec<(Command, Option<Vec<String>>)> = input.split('$').filter_map(|s| {
-        let inner: Vec<String> = s.split('\n').filter_map(|s| if !s.is_empty() {Some(s.trim().to_string()) }else{None}).collect();
-        match inner.len() {
-            0 => None,
-            1 => Some ((string_to_command(&inner[0]), None)),
-            _ => Some((string_to_command(&inner[0]), Some(inner[1..].to_vec()))),
-        }
-    }).collect();
+    let io: Vec<(Command, Option<Vec<String>>)> = input
+        .split('$')
+        .filter_map(|s| {
+            let inner: Vec<String> = s
+                .split('\n')
+                .filter_map(|s| {
+                    if !s.is_empty() {
+                        Some(s.trim().to_string())
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            match inner.len() {
+                0 => None,
+                1 => Some((string_to_command(&inner[0]), None)),
+                _ => Some((string_to_command(&inner[0]), Some(inner[1..].to_vec()))),
+            }
+        })
+        .collect();
 
     let mut file_system: HashMap<String, FsItem> = HashMap::new();
     let mut current_directory = "".to_string();
@@ -56,8 +68,19 @@ fn prepare_filesystem(input: &str) -> HashMap<String, FsItem> {
         match input {
             ChangeDirectory(dir) => {
                 if &dir == ".." {
-                    let path: Vec<String> = current_directory.split('/').filter_map(|s| if !s.is_empty() {Some(s.to_string())} else{None}).collect();
-                    current_directory = path[0..path.len()-1].iter().fold("/".to_string(), |acc, s| format!("{}{}/", acc, s));
+                    let path: Vec<String> = current_directory
+                        .split('/')
+                        .filter_map(|s| {
+                            if !s.is_empty() {
+                                Some(s.to_string())
+                            } else {
+                                None
+                            }
+                        })
+                        .collect();
+                    current_directory = path[0..path.len() - 1]
+                        .iter()
+                        .fold("/".to_string(), |acc, s| format!("{}{}/", acc, s));
                 } else if &dir == "/" {
                     current_directory = "/".to_string();
                 } else {
@@ -65,16 +88,24 @@ fn prepare_filesystem(input: &str) -> HashMap<String, FsItem> {
                 }
             }
             Command::List => {
-                let items: Vec<(String, FsItem)> = output.unwrap().iter().map(|s| string_to_item(s)).collect();
+                let items: Vec<(String, FsItem)> =
+                    output.unwrap().iter().map(|s| string_to_item(s)).collect();
                 let mut cursor = &mut file_system;
-                let  path_iter = current_directory.split('/').filter_map(|s| if !s.is_empty() {Some(s.to_string())} else{None});
+                let path_iter = current_directory.split('/').filter_map(|s| {
+                    if !s.is_empty() {
+                        Some(s.to_string())
+                    } else {
+                        None
+                    }
+                });
                 for p in path_iter {
                     cursor = match cursor.get_mut(&p).unwrap() {
-                        Directory(d) => { d }
-                        File(_) => { panic!("Huh?");}
+                        Directory(d) => d,
+                        File(_) => {
+                            panic!("Huh?");
+                        }
                     };
-                };
-
+                }
 
                 for i in items {
                     cursor.insert(i.0, i.1);
@@ -85,7 +116,6 @@ fn prepare_filesystem(input: &str) -> HashMap<String, FsItem> {
     file_system
 }
 
-
 fn do_day7a(input: &str) -> usize {
     let file_system = prepare_filesystem(input);
     let mut global_accum = 0;
@@ -94,9 +124,11 @@ fn do_day7a(input: &str) -> usize {
 }
 
 fn calculate_dir_size(input_dir: &HashMap<String, FsItem>, global_accum: &mut usize) -> usize {
-    let s = input_dir.iter().fold(0, |acc, item| acc + match item.1 {
-        Directory(dir) => calculate_dir_size(dir, global_accum),
-        File(size) => *size,
+    let s = input_dir.iter().fold(0, |acc, item| {
+        acc + match item.1 {
+            Directory(dir) => calculate_dir_size(dir, global_accum),
+            File(size) => *size,
+        }
     });
     if s < 100_000 {
         *global_accum += s;
@@ -104,10 +136,15 @@ fn calculate_dir_size(input_dir: &HashMap<String, FsItem>, global_accum: &mut us
     s
 }
 
-fn calculate_dir_size_partb(input_dir: &HashMap<String, FsItem>, dir_sizes: &mut Vec<usize>) -> usize {
-    let s = input_dir.iter().fold(0, |acc, item| acc + match item.1 {
-        Directory(dir) => calculate_dir_size_partb(dir, dir_sizes),
-        File(size) => *size,
+fn calculate_dir_size_partb(
+    input_dir: &HashMap<String, FsItem>,
+    dir_sizes: &mut Vec<usize>,
+) -> usize {
+    let s = input_dir.iter().fold(0, |acc, item| {
+        acc + match item.1 {
+            Directory(dir) => calculate_dir_size_partb(dir, dir_sizes),
+            File(size) => *size,
+        }
     });
     dir_sizes.push(s);
     s
